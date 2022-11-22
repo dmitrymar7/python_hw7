@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-
+from xml.dom import minidom
 
 class Record:
     def __init__(self, name, telephone, comment=None):
@@ -56,10 +56,23 @@ class Record:
 
         return cls(name, telephone, comment)
 
-
 class Phonebook:
     _instance = None
     _file_name = "text.txt"
+
+    def clear_file(self):
+        with open(self._file_name, "w", encoding='utf-8') as file:
+            pass
+
+    def import_text(self, text):
+        with open(self._file_name, "w", encoding='utf-8') as file:
+            file.write(text)
+
+    def export_text(self):
+        elem = self.toElementTree()
+        rough_string = ET.tostring(elem, 'utf-8')
+        reparsed = minidom.parseString(rough_string)
+        return reparsed.toprettyxml(indent="  ")
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
